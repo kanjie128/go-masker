@@ -3,7 +3,6 @@ package masker
 
 import (
 	"fmt"
-	"math"
 	"net/url"
 	"reflect"
 	"strings"
@@ -319,7 +318,10 @@ func (m *Masker) Address(i string) string {
 	if l <= 6 {
 		return strLoop(instance.mask, len("******"))
 	}
-	return m.overlay(i, strLoop(instance.mask, len("******")), 6, math.MaxInt)
+	// support old go version
+	intSize := 32 << (^uint(0) >> 63) // 32 or 64
+	MaxInt := 1<<(intSize-1) - 1
+	return m.overlay(i, strLoop(instance.mask, len("******")), 6, MaxInt)
 }
 
 // CreditCard mask 6 digits from the 7'th digit
